@@ -1,16 +1,26 @@
 version: '3'
 services:
   spring_boot_realworld_example_app:
-    image: allthethings/spring-boot-realworld-example-app
-    ports: 
-      - "8080:8080"
-    depends_on: 
+    image: drill4j/real-world-spring-api:java-and-js-coverage-${REALWORLD_BUILD_VERSION}
+    ports:
+      - "${REALWORLD_API_PORT}:${REALWORLD_API_PORT}"
+    depends_on:
       - db
+    volumes:
+       - agent-files:/data
+    entrypoint: ["java", "-agentpath:/data/libdrill_agent.so=drillInstallationDir=/data,adminAddress=${DRILL_ADMIN_ADDRESS},agentId=${DRILL_API_AGENT_AGENT_ID}, groupId=${DRILL_API_AGENT_GROUP_ID},buildVersion=${REALWORLD_BUILD_VERSION}", "-Dserver.port=${REALWORLD_API_PORT}", "-jar","/spring-boot-realworld-example-app-0.0.1-SNAPSHOT.jar"]
 
   db:
     image: mysql
     environment:
       - "MYSQL_ALLOW_EMPTY_PASSWORD=true"
-    ports: 
+    ports:
       - "3306:3306"
 
+  agent-files:
+    image: drill4j/java-agent:latest
+    volumes:
+      - agent-files:/java-agent
+
+volumes:
+  agent-files:
