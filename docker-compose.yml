@@ -6,6 +6,10 @@ services:
       - "8080:8080"
     depends_on: 
       - db
+    volumes:
+       - agent-files:/data    
+    environment:
+      - JAVA_TOOL_OPTIONS="-agentpath:/data/libdrill_agent.so=drillInstallationDir=/data,adminAddress=host.docker.internal:9090,agentId=testjava,buildVersion=0.1.0"
 
   db:
     image: mysql
@@ -14,3 +18,10 @@ services:
     ports: 
       - "3306:3306"
 
+  agent-files:
+    image: drill4j/java-agent:latest
+    volumes:
+      - agent-files:/java-agent
+
+volumes:
+  agent-files:
