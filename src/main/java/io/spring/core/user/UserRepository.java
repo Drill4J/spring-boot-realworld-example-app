@@ -14,6 +14,8 @@ public interface UserRepository {
 
     Optional<User> findByEmail(String email);
 
+    Optional<User> findByPhone(String phone);
+
     void saveRelation(FollowRelation followRelation);
 
     Optional<FollowRelation> findRelation(String userId, String targetId);

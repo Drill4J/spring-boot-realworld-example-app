@@ -49,6 +49,11 @@ public class MyBatisUserRepository implements UserRepository {
         }
     }
 
+	@Override
+	public Optional<User> findByPhone(String phone) {
+		return Optional.empty();
+	}
+
     @Override
     public Optional<FollowRelation> findRelation(String userId, String targetId) {
         return Optional.ofNullable(userMapper.findRelation(userId, targetId));

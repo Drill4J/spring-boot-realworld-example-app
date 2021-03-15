@@ -43,14 +43,14 @@ public class MyBatisUserRepositoryTest {
     @Test
     public void should_update_user_success() {
         String newEmail = "newemail@email.com";
-        user.update(newEmail, "", "", "", "");
+        user.update(newEmail, "", "", "", "", "");
         userRepository.save(user);
         Optional<User> optional = userRepository.findByUsername(user.getUsername());
         assertTrue(optional.isPresent());
         assertEquals(optional.get().getEmail(), newEmail);
 
         String newUsername = "newUsername";
-        user.update("", newUsername, "", "", "");
+        user.update("", newUsername, "", "", "","");
         userRepository.save(user);
         optional = userRepository.findByEmail(user.getEmail());
         assertTrue(optional.isPresent());

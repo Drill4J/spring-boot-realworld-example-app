@@ -63,6 +63,7 @@ public class UsersApi {
             encryptService.encrypt(registerParam.getPassword()),
             "",
             defaultImage);
+    user.update("", "", "", "", "", registerParam.getPhone());
     userRepository.save(user);
     UserData userData = userQueryService.findById(user.getId()).get();
     return ResponseEntity.status(201)
@@ -159,4 +160,6 @@ class RegisterParam {
 
   @NotBlank(message = "can't be empty")
   private String password;
+
+  private String phone;
 }
