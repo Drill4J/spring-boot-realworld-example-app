@@ -91,7 +91,9 @@ class UserService {
         updateUserParam.getUsername(),
         updateUserParam.getPassword(),
         updateUserParam.getBio(),
-        updateUserParam.getImage());
+        updateUserParam.getImage(),
+        updateUserParam.getPhone()
+        );
     userRepository.save(user);
   }
 }
@@ -124,6 +126,7 @@ class UpdateUserValidator implements ConstraintValidator<UpdateUserConstraint, U
   public boolean isValid(UpdateUserCommand value, ConstraintValidatorContext context) {
     String inputEmail = value.getParam().getEmail();
     String inputUsername = value.getParam().getUsername();
+    String inputPhone = value.getParam().getPhone();
     final User targetUser = value.getTargetUser();
 
     boolean isEmailValid =
@@ -133,7 +136,8 @@ class UpdateUserValidator implements ConstraintValidator<UpdateUserConstraint, U
             .findByUsername(inputUsername)
             .map(user -> user.equals(targetUser))
             .orElse(true);
-    if (isEmailValid && isUsernameValid) {
+    boolean isPhoneValid = userRepository.findByPhone(targetUser.getPhone()).map(user -> !user.equals(targetUser)).orElse(true);
+    if (isEmailValid && isUsernameValid && isPhoneValid) {
       return true;
     } else {
       context.disableDefaultConstraintViolation();
@@ -166,4 +170,5 @@ class UpdateUserParam {
   private String username = "";
   private String bio = "";
   private String image = "";
+  private String phone = "";
 }
