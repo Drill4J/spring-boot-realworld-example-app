@@ -16,6 +16,7 @@ public class Comment {
     private String userId;
     private String articleId;
     private DateTime createdAt;
+    private String subtitle;
 
     public Comment(String body, String userId, String articleId) {
         this.id = UUID.randomUUID().toString();
@@ -23,5 +24,16 @@ public class Comment {
         this.userId = userId;
         this.articleId = articleId;
         this.createdAt = new DateTime();
+        this.subtitle = "";
+    }
+
+    public void update(String body, String subtitle) {
+        if (!"".equals(body)) {
+            this.body = body;
+        }
+
+        if (!"".equals(subtitle)) {
+            this.subtitle = subtitle;
+        }
     }
 }

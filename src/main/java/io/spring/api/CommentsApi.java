@@ -53,6 +53,7 @@ public class CommentsApi {
       @Valid @RequestBody NewCommentParam newCommentParam) {
     Article article = findArticle(slug);
     Comment comment = new Comment(newCommentParam.getBody(), user.getId(), article.getId());
+    comment.update("", newCommentParam.getSubtitle());
     commentRepository.save(comment);
     return ResponseEntity.status(201)
         .body(commentResponse(commentQueryService.findById(comment.getId(), user).get()));
@@ -69,25 +70,6 @@ public class CommentsApi {
             put("comments", comments);
           }
         });
-  }
-
-  @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
-  public ResponseEntity deleteComment(
-      @PathVariable("slug") String slug,
-      @PathVariable("id") String commentId,
-      @AuthenticationPrincipal User user) {
-    Article article = findArticle(slug);
-    return commentRepository
-        .findById(article.getId(), commentId)
-        .map(
-            comment -> {
-              if (!AuthorizationService.canWriteComment(user, article, comment)) {
-                throw new NoAuthorizationException();
-              }
-              commentRepository.remove(comment);
-              return ResponseEntity.noContent().build();
-            })
-        .orElseThrow(ResourceNotFoundException::new);
   }
 
   private Article findArticle(String slug) {
@@ -112,4 +94,6 @@ public class CommentsApi {
 class NewCommentParam {
   @NotBlank(message = "can't be empty")
   private String body;
+
+  private String subtitle;
 }
