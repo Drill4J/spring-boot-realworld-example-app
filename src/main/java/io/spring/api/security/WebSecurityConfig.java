@@ -1,5 +1,7 @@
 package io.spring.api.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,11 +17,15 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
+
 import static java.util.Arrays.asList;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
 
     @Value("${spring.h2.console.enabled:false}")
     private boolean h2ConsoleEnabled;
@@ -57,9 +63,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(asList("http://localhost:4200"));
-        configuration.setAllowedMethods(asList("HEAD",
-            "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        String allowed = System.getenv("ACCESS_CONTROL_ALLOW_ORIGIN");
+        if (allowed == null) {
+            allowed = "http://localhost,https://localhost";
+        }
+        List<String> allowedOrigins = asList(allowed.split(","));
+        logger.info("allowed origins: " + allowedOrigins);
+        configuration.setAllowedOrigins(allowedOrigins);
+        configuration.setAllowedMethods(asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         // setAllowCredentials(true) is important, otherwise:
         // The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'.
         configuration.setAllowCredentials(true);
