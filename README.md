@@ -67,3 +67,25 @@ Follow the instruction from [google-java-format-git-pre-commit-hook](https://git
 # Help
 
 Please fork and PR to improve the code.
+
+# Drill
+## How to create a new image
+step 1:
+
+    ./gradlew build
+step 2:
+
+    docker build --tag=drill4j/real-world-spring-api:java-and-js-coverage-0.1.1 .
+step 3: push to docker hub
+
+## Branch strategy
+
+master - todo
+
+examples/* - todo
+
+## System env
+
+ACCESS_CONTROL_ALLOW_ORIGIN by comma.
+
+default value "http://localhost,https://localhost"
