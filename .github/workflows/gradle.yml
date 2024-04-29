@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         config:
-          - { drill-admin-address: "https://complete-cat-correct.ngrok-free.app",
+          - { drill-admin-address: "https://complete-cat-correct.ngrok-free.app:8090",
               drill-api-agent-id: "spring-realworld-backend",
               drill-group-id: "realworld-app" }
     runs-on: ubuntu-latest
