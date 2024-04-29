@@ -12,23 +12,51 @@ on:
 
 jobs:
   build:
-
+    strategy:
+      matrix:
+        config:
+          - { drill-admin-address: "https://complete-cat-correct.ngrok-free.app/",
+              drill-api-agent-id: "spring-realworld-backend",
+              drill-group-id: "realworld-app" }
     runs-on: ubuntu-latest
     if: "! contains(github.event.head_commit.message, '[ci skip]')"
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.8
-    - uses: actions/cache@v2
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-    - name: Test with Gradle
-      run: ./gradlew clean test
+      - uses: actions/checkout@v1
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Build JAR with Gradle
+        run: ./gradlew clean build
+      - name: Download Drill4J agent
+        run: |
+          curl -L -o ./build/libs/file.zip https://github.com/Drill4J/java-agent/releases/download/v0.8.6-github-action.0/agent-linuxX64-0.8.6-github-action.0.zip
+          unzip ./build/libs/file.zip
+      - name: Run tests with drill agent
+        run: |
+          /gradlew clean build
+          java -jar ./build/lib/spring-boot-realworld-example-app-0.0.1-SNAPSHOT.jar -agentpath:/linuxX64-0.8.6-github-action.0/libdrill_agent.so=drillInstallationDir=/linuxX64-0.8.6-github-action.0,adminAddress=${{config.drill-admin-address}},agentId=${{config.drill-api-agent-id}},groupId=${{config.drill-group-id}},apiKey=${{ secrets.DRILL_API_KEY }},buildVersion=0.1.0,packagePrefixes=io/spring,vcsMetadataHash=$GITHUB_SHA,vcsMetadataParents=realworld-hash-0,vcsMetadataBranch=$GITHUB_HEAD_REF &
+          APP_PID=$!
+          sleep 120
+          kill $APP_PID
+      - name: Drill4J Github Action
+        uses: bodyangug/drill4j-report-github-action@v0.3
+        with:
+          group-id: ${{ config.drill-group-id }}
+          agent-id: ${{ config.drill-api-agent-id }}
+          drill-address: ${{ config.drill-admin-address }}
+          repo-token: ${{ secrets.TOKEN }}
+          current-branch: $GITHUB_HEAD_REF
+          current-vcs-ref: $GITHUB_SHA
+          base-branch: $GITHUB_BASE_REF
+          base-vcs-ref: ${{ github.event.pull_request.base.sha }}
+
