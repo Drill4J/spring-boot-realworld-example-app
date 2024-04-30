@@ -30,6 +30,7 @@ jobs:
       - name: Investigate drill param.
         run: |
           env | sort
+          cat /home/runner/work/_temp/_github_workflow/event.json
       - name: Run tests with drill agent
         run: |
           ./gradlew clean build
