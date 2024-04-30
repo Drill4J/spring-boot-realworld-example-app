@@ -11,8 +11,9 @@ jobs:
       matrix:
         config:
           - { drill-admin-address: "https://complete-cat-correct.ngrok-free.app",
-              drill-api-agent-id: "spring-realworld-backend-git",
-              drill-group-id: "realworld-app-git" }
+              drill-api-agent-id: "spring-realworld-backend-git-0",
+              drill-group-id: "realworld-app-git-0"
+          }
     runs-on: ubuntu-latest
     if: "! contains(github.event.head_commit.message, '[ci skip]')"
     steps:
@@ -32,14 +33,14 @@ jobs:
           echo ${{matrix.config.drill-admin-address}}
           echo ${{matrix.config.drill-api-agent-id}}
           echo ${{matrix.config.drill-group-id}}
-          echo $GITHUB_HEAD_REF
-          echo $GITHUB_SHA
-          echo $GITHUB_BASE_REF
-          echo ${{ github.event.pull_request.base.sha }}
+          echo ${{github.event.pull_request.head.ref}}
+          echo ${{github.event.pull_request.head.sha}}
+          echo ${{github.event.pull_request.base.ref}}
+          echo ${{github.event.pull_request.base.sha}}
       - name: Run tests with drill agent
         run: |
           ./gradlew clean build
-          java -agentpath:/opt/linuxX64-0.8.6-github-action.1/libdrill_agent.so=drillInstallationDir=/opt/linuxX64-0.8.6-github-action.1,adminAddress=${{matrix.config.drill-admin-address}},agentId=${{matrix.config.drill-api-agent-id}},groupId=${{matrix.config.drill-group-id}},apiKey=${{secrets.DRILL_API_KEY}},buildVersion=0.1.0,packagePrefixes=io/spring,vcsMetadataHash=$GITHUB_SHA,vcsMetadataParents=realworld-hash-0,vcsMetadataBranch=$GITHUB_HEAD_REF -jar ./build/libs/spring-boot-realworld-example-app-0.0.1-SNAPSHOT.jar &
+          java -agentpath:/opt/linuxX64-0.8.6-github-action.1/libdrill_agent.so=drillInstallationDir=/opt/linuxX64-0.8.6-github-action.1,adminAddress=${{matrix.config.drill-admin-address}},agentId=${{matrix.config.drill-api-agent-id}},groupId=${{matrix.config.drill-group-id}},apiKey=${{secrets.DRILL_API_KEY}},buildVersion=0.1.0,packagePrefixes=io/spring,vcsMetadataHash=${{github.event.pull_request.head.sha}},vcsMetadataParents=realworld-hash-0,vcsMetadataBranch=${{github.event.pull_request.head.ref}} -jar ./build/libs/spring-boot-realworld-example-app-0.0.1-SNAPSHOT.jar &
           APP_PID=$!
           sleep 120
           kill $APP_PID
@@ -50,8 +51,7 @@ jobs:
           agent-id: ${{ matrix.config.drill-api-agent-id }}
           drill-address: ${{ matrix.config.drill-admin-address }}
           repo-token: ${{ secrets.TOKEN }}
-          current-branch: $GITHUB_HEAD_REF
-          current-vcs-ref: $GITHUB_SHA
-          base-branch: $GITHUB_BASE_REF
+          current-branch: ${{ github.event.pull_request.head.ref }}
+          current-vcs-ref: ${{ github.event.pull_request.head.sha }}
+          base-branch: ${{ github.event.pull_request.base.ref }}
           base-vcs-ref: ${{ github.event.pull_request.base.sha }}
-
