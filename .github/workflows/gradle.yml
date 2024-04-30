@@ -15,7 +15,6 @@ jobs:
               drill-group-id: "realworld-app-git-0"
           }
     runs-on: ubuntu-latest
-    if: "! contains(github.event.head_commit.message, '[ci skip]')"
     steps:
       - uses: actions/checkout@v1
       - name: Set up JDK 1.8
@@ -30,13 +29,7 @@ jobs:
           unzip /opt/file.zip -d /opt
       - name: Investigate drill param.
         run: |
-          echo ${{matrix.config.drill-admin-address}}
-          echo ${{matrix.config.drill-api-agent-id}}
-          echo ${{matrix.config.drill-group-id}}
-          echo ${{github.event.pull_request.head.ref}}
-          echo ${{github.event.pull_request.head.sha}}
-          echo ${{github.event.pull_request.base.ref}}
-          echo ${{github.event.pull_request.base.sha}}
+          env | sort
       - name: Run tests with drill agent
         run: |
           ./gradlew clean build
