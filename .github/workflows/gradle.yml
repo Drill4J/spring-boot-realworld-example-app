@@ -35,7 +35,7 @@ jobs:
           sleep 120
           kill $APP_PID
       - name: Drill4J Github Action
-        uses: bodyangug/drill4j-report-github-action@v0.4
+        uses: bodyangug/drill4j-report-github-action@v0.5
         with:
           group-id: ${{ matrix.config.drill-group-id }}
           agent-id: ${{ matrix.config.drill-api-agent-id }}
