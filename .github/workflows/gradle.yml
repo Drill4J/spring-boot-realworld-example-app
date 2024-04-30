@@ -38,12 +38,12 @@ jobs:
         run: ./gradlew clean build
       - name: Download Drill4J agent
         run: |
-          curl -L -o /opt/file.zip https://github.com/Drill4J/java-agent/releases/download/v0.8.6-github-action.0/agent-linuxX64-0.8.6-github-action.0.zip
+          curl -L -o /opt/file.zip https://github.com/Drill4J/java-agent/releases/download/v0.8.6-github-action.1/agent-linuxX64-0.8.6-github-action.1.zip
           unzip /opt/file.zip -d /opt
       - name: Run tests with drill agent
         run: |
           ./gradlew clean build
-          java -agentpath:/opt/linuxX64-0.8.6-github-action.0/libdrill_agent.so=drillInstallationDir=/opt/linuxX64-0.8.6-github-action.0,adminAddress=${{matrix.config.drill-admin-address}},agentId=${{matrix.config.drill-api-agent-id}},groupId=${{matrix.config.drill-group-id}},apiKey=${{secrets.DRILL_API_KEY}},buildVersion=0.1.0,packagePrefixes=io/spring,vcsMetadataHash=$GITHUB_SHA,vcsMetadataParents=realworld-hash-0,vcsMetadataBranch=$GITHUB_HEAD_REF,sslTruststore= -jar ./build/libs/spring-boot-realworld-example-app-0.0.1-SNAPSHOT.jar &
+          java -agentpath:/opt/linuxX64-0.8.6-github-action.1/libdrill_agent.so=drillInstallationDir=/opt/linuxX64-0.8.6-github-action.1,adminAddress=${{matrix.config.drill-admin-address}},agentId=${{matrix.config.drill-api-agent-id}},groupId=${{matrix.config.drill-group-id}},apiKey=${{secrets.DRILL_API_KEY}},buildVersion=0.1.0,packagePrefixes=io/spring,vcsMetadataHash=$GITHUB_SHA,vcsMetadataParents=realworld-hash-0,vcsMetadataBranch=$GITHUB_HEAD_REF -jar ./build/libs/spring-boot-realworld-example-app-0.0.1-SNAPSHOT.jar &
           APP_PID=$!
           sleep 120
           kill $APP_PID
