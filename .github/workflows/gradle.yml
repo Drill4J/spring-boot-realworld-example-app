@@ -1,11 +1,6 @@
 name: Java CI
 
 on:
-  push:
-    branches:
-      - '**'
-    tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
   pull_request:
     branches:
       - '**'
@@ -16,8 +11,8 @@ jobs:
       matrix:
         config:
           - { drill-admin-address: "https://complete-cat-correct.ngrok-free.app",
-              drill-api-agent-id: "spring-realworld-backend",
-              drill-group-id: "realworld-app" }
+              drill-api-agent-id: "spring-realworld-backend-git",
+              drill-group-id: "realworld-app-git" }
     runs-on: ubuntu-latest
     if: "! contains(github.event.head_commit.message, '[ci skip]')"
     steps:
@@ -26,20 +21,21 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
       - name: Build JAR with Gradle
         run: ./gradlew clean build
       - name: Download Drill4J agent
         run: |
           curl -L -o /opt/file.zip https://github.com/Drill4J/java-agent/releases/download/v0.8.6-github-action.1/agent-linuxX64-0.8.6-github-action.1.zip
           unzip /opt/file.zip -d /opt
+      - name: Investigate drill param.
+        run: |
+          echo ${{matrix.config.drill-admin-address}}
+          echo ${{matrix.config.drill-api-agent-id}}
+          echo ${{matrix.config.drill-group-id}}
+          echo $GITHUB_HEAD_REF
+          echo $GITHUB_SHA
+          echo $GITHUB_BASE_REF
+          echo ${{ github.event.pull_request.base.sha }}
       - name: Run tests with drill agent
         run: |
           ./gradlew clean build
