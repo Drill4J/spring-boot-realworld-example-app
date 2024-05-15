@@ -37,12 +37,9 @@ jobs:
       - name: Drill4J Github Action
         uses: Drill4J/drill-cicd-integration@feature/github-action-integration
         with:
+          drill_api_url: ${{ matrix.config.drill-admin-address }}
+          drill_api_key: ${{ secrets.DRILL_API_KEY }}
           group_id: ${{ matrix.config.drill-group-id }}
           agent_id: ${{ matrix.config.drill-api-agent-id }}
-          current_branch: ${{ github.event.pull_request.head.ref }}
-          current_vcs_ref: ${{ github.event.pull_request.head.sha }}
-          base_branch: ${{ github.event.pull_request.base.ref }}
-          base_vcs_ref: ${{ github.event.pull_request.base.sha }}
-          drill_address: ${{ matrix.config.drill-admin-address }}
-          repo_token: ${{ secrets.TOKEN }}
+          github_token: ${{ secrets.TOKEN }}
           mode: "githubPullRequestReportByEvent"
