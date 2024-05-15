@@ -35,7 +35,7 @@ jobs:
           sleep 120
           kill $APP_PID
       - name: Drill4J Github Action
-        uses: Drill4J/drill-cicd-integration/tree/main/.github/actions/drill4j-report-github-action@main
+        uses: Drill4J/drill-cicd-integration@main
         with:
           group-id: ${{ matrix.config.drill-group-id }}
           agent-id: ${{ matrix.config.drill-api-agent-id }}
