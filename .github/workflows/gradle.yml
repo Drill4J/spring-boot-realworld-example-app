@@ -35,13 +35,14 @@ jobs:
           sleep 120
           kill $APP_PID
       - name: Drill4J Github Action
-        uses: bodyangug/drill4j-report-github-action@v0.5
+        uses: Drill4J/drill-cicd-integration/tree/main/.github/actions/drill4j-report-github-action@main
         with:
           group-id: ${{ matrix.config.drill-group-id }}
           agent-id: ${{ matrix.config.drill-api-agent-id }}
-          drill-address: ${{ matrix.config.drill-admin-address }}
-          repo-token: ${{ secrets.TOKEN }}
           current-branch: ${{ github.event.pull_request.head.ref }}
           current-vcs-ref: ${{ github.event.pull_request.head.sha }}
           base-branch: ${{ github.event.pull_request.base.ref }}
           base-vcs-ref: ${{ github.event.pull_request.base.sha }}
+          drill-address: ${{ matrix.config.drill-admin-address }}
+          repo-token: ${{ secrets.TOKEN }}
+          mode: "githubPullRequestReportByEvent"
